@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Book Appointment</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f5f5f5;
+text-align:center;
+}
+
+.container{
+background:white;
+width:500px;
+margin:auto;
+padding:30px;
+margin-top:80px;
+border-radius:10px;
+box-shadow:0 0 10px gray;
+}
+
+input,select{
+width:90%;
+padding:10px;
+margin:8px;
+}
+
+button{
+padding:12px 25px;
+font-size:16px;
+background:#2e86de;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1b4f72;
+}
+
+.error{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Book Appointment</h2>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+
+{% csrf_token %}
+
+<input
+type="text"
+name="name"
+placeholder="Enter your name"
+pattern="[A-Za-z ]{2,}"
+title="Name should contain only letters"
+required>
+
+<input 
+type="tel" 
+name="phone" 
+placeholder="Enter 10-digit phone number"
+pattern="[0-9]{10}"
+maxlength="10"
+required>
+
+<input type="date" name="date" required><br>
+
+<select name="time" required>
+
+<option value="">Select Time Slot</option>
+
+{% for slot in slots %}
+<option value="{{slot}}">{{slot}}</option>
+{% endfor %}
+
+</select>
+
+<br>
+
+<button type="submit">Book Appointment</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

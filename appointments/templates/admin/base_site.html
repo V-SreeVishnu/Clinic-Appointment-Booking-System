@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+
+<script>
+setTimeout(function(){
+    location.reload();
+}, 5000);   // refresh every 5 seconds
+</script>
+
+{% endblock %}

@@ -60,8 +60,10 @@ def book(request):
                 fail_silently=False,
             )
         except Exception as e:
-            print("Email error:", e)
-
+            import traceback
+            print("Email error:")
+            traceback.print_exc()
+            
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 
     return render(request, "book.html", {

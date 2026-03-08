@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Appointment
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-import os
+import requests
 
 
 def home(request):
@@ -51,29 +49,29 @@ def book(request):
             token=token
         )
 
-        # send email using SendGrid
+        # Telegram notification
+        BOT_TOKEN = "8638373518:AAEBpnFePkEW92bRXeiKnB1SANxtIYSykVI"
+        CHAT_ID = "5778787132"
+
+        message = f"""
+📅 New Appointment
+
+Name: {name}
+Phone: {phone}
+Date: {date}
+Time: {time}
+Token: {token}
+"""
+
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+
         try:
-            message = Mail(
-                from_email='sreevishnu0101@gmail.com',
-                to_emails='vishnuslap@gmail.com',
-                subject='New Clinic Appointment',
-                html_content=f"""
-                <strong>New Appointment Booked</strong><br>
-                Name: {name}<br>
-                Phone: {phone}<br>
-                Date: {date}<br>
-                Time: {time}<br>
-                Token: {token}
-                """
-            )
-
-            sg = SendGridAPIClient(os.environ["SENDGRID_API_KEY"])
-            response = sg.send(message)
-
-            print(response.status_code)
-
+            requests.post(url, data={
+                "chat_id": CHAT_ID,
+                "text": message
+            })
         except Exception as e:
-            print("SendGrid error:", str(e))
+            print("Telegram error:", e)
 
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 

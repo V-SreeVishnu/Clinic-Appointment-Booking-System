@@ -67,11 +67,13 @@ def book(request):
                 """
             )
 
-            sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
-            sg.send(message)
+            sg = SendGridAPIClient(os.environ["SENDGRID_API_KEY"])
+            response = sg.send(message)
+
+            print(response.status_code)
 
         except Exception as e:
-            print("Email error:", e)
+            print("SendGrid error:", str(e))
 
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 

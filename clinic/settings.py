@@ -26,7 +26,13 @@ SECRET_KEY = 'django-insecure-d$53qj3j-ahpan^jsxdrfij_vlkw(g=tr0i415nu5lg-#zgujk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "clinic-website-xquo.onrender.com"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://clinic-website-xquo.onrender.com"
+]
 
 
 # Application definition
@@ -139,10 +145,4 @@ EMAIL_HOST_USER = 'sreevishnu0101@gmail.com'
 EMAIL_HOST_PASSWORD = 'nkyqhlshhsjnqfsr'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-ALLOWED_HOSTS = [
-    "clinic-website-xquo.onrender.com"
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://clinic-website-xquo.onrender.com"
-]   
+   

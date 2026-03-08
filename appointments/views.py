@@ -54,7 +54,7 @@ def book(request):
             f"New Appointment Booked\n\nName: {name}\nPhone: {phone}\nDate: {date}\nTime: {time}\nToken: {token}",
             "sreevishnu0101@gmail.com",
             ["vishnuslap@gmail.com"],
-            fail_silently=False,
+             fail_silently=True
         )
 
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")

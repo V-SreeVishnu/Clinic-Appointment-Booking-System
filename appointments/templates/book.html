@@ -88,11 +88,20 @@ required>
 <option value="">Select Time Slot</option>
 
 {% for slot in slots %}
-<option value="{{slot}}">{{slot}}</option>
+
+{% if slot in booked_slots %}
+<option value="{{slot}}" disabled>
+{{slot}} (Booked)
+</option>
+{% else %}
+<option value="{{slot}}">
+{{slot}}
+</option>
+{% endif %}
+
 {% endfor %}
 
 </select>
-
 <br>
 
 <button type="submit">Book Appointment</button>

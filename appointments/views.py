@@ -1,5 +1,5 @@
-import urllib.parse
 from django.shortcuts import render, redirect
+from django.core.mail import send_mail
 from .models import Appointment
 
 
@@ -14,41 +14,30 @@ def book(request):
         "17:00","17:30","18:00","18:30","19:00","19:30","20:00"
     ]
 
-    if request.method == "POST":
+    date = request.POST.get("date") or request.GET.get("date")
+
+    booked_slots = []
+
+    if date:
+        booked_slots = list(
+            Appointment.objects.filter(date=date).values_list("time", flat=True)
+        )
+
+    if request.method == "POST" and request.POST.get("time"):
 
         name = request.POST.get("name")
         phone = request.POST.get("phone")
-        date = request.POST.get("date")
         time = request.POST.get("time")
 
-        # phone validation
-        if not phone.isdigit() or len(phone) != 10:
-            return render(request,"book.html",{
-                "slots":slots,
-                "error":"Please enter a valid 10 digit phone number."
-            })
-
-        # name validation
-        if not name.replace(" ","").isalpha():
-            return render(request,"book.html",{
-                "slots":slots,
-                "error":"Name should contain only letters."
-            })
-
-        if not time:
-            return render(request,"book.html",{
-                "slots":slots,
-                "error":"Please select a time slot."
-            })
-
         # prevent double booking
-        if Appointment.objects.filter(date=date,time=time).exists():
-            return render(request,"book.html",{
-                "slots":slots,
-                "error":"This slot is already booked. Please choose another time."
+        if Appointment.objects.filter(date=date, time=time).exists():
+            return render(request, "book.html", {
+                "slots": slots,
+                "booked_slots": booked_slots,
+                "date": date,
+                "error": "This slot is already booked. Please choose another time."
             })
 
-        # generate token
         token = Appointment.objects.filter(date=date).count() + 1
 
         Appointment.objects.create(
@@ -59,24 +48,22 @@ def book(request):
             token=token
         )
 
-        message = f"""
-New Appointment Booked
+        # send email notification
+        send_mail(
+            "New Clinic Appointment",
+            f"New Appointment Booked\n\nName: {name}\nPhone: {phone}\nDate: {date}\nTime: {time}\nToken: {token}",
+            "sreevishnu0101@gmail.com",
+            ["vishnuslap@gmail.com"],
+            fail_silently=False,
+        )
 
-Name: {name}
-Phone: {phone}
-Date: {date}
-Time: {time}
-Token: {token}
-"""
+        return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 
-        encoded_message = urllib.parse.quote(message)
-
-        # Replace with your dad's WhatsApp number
-        whatsapp_url = f"https://wa.me/919392881524?text={encoded_message}"
-
-        return redirect(whatsapp_url)
-
-    return render(request,"book.html",{"slots":slots})
+    return render(request, "book.html", {
+        "slots": slots,
+        "booked_slots": booked_slots,
+        "date": date
+    })
 
 
 def success(request):
@@ -86,9 +73,9 @@ def success(request):
     time = request.GET.get("time")
     token = request.GET.get("token")
 
-    return render(request,"success.html",{
-        "name":name,
-        "date":date,
-        "time":time,
-        "token":token
+    return render(request, "success.html", {
+        "name": name,
+        "date": date,
+        "time": time,
+        "token": token
     })

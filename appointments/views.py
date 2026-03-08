@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
+from django.conf import settings
 from .models import Appointment
 
 
@@ -49,17 +50,17 @@ def book(request):
             token=token
         )
 
-        # send email safely
+        # send email
         try:
             send_mail(
                 "New Clinic Appointment",
                 f"New Appointment Booked\n\nName: {name}\nPhone: {phone}\nDate: {date}\nTime: {time}\nToken: {token}",
-                EMAIL_HOST_USER,
-                ["vishnuslap@gmail.com"],
+                settings.EMAIL_HOST_USER,
+                ["vishnuslap@gmail.com"],   # your dad's email
                 fail_silently=False,
             )
         except Exception as e:
-             print("Email error:", e)
+            print("Email error:", e)
 
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 

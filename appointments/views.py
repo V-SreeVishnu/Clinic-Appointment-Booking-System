@@ -54,12 +54,12 @@ def book(request):
             send_mail(
                 "New Clinic Appointment",
                 f"New Appointment Booked\n\nName: {name}\nPhone: {phone}\nDate: {date}\nTime: {time}\nToken: {token}",
-                "sreevishnu0101@gmail.com",
+                EMAIL_HOST_USER,
                 ["vishnuslap@gmail.com"],
                 fail_silently=False,
             )
-        except:
-            pass
+        except Exception as e:
+             print("Email error:", e)
 
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 

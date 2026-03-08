@@ -40,6 +40,7 @@ def book(request):
 
         token = Appointment.objects.filter(date=date).count() + 1
 
+        # save appointment
         Appointment.objects.create(
             name=name,
             phone=phone,
@@ -48,14 +49,17 @@ def book(request):
             token=token
         )
 
-        # send email notification
-        send_mail(
-            "New Clinic Appointment",
-            f"New Appointment Booked\n\nName: {name}\nPhone: {phone}\nDate: {date}\nTime: {time}\nToken: {token}",
-            "sreevishnu0101@gmail.com",
-            ["vishnuslap@gmail.com"],
-             fail_silently=True
-        )
+        # send email safely
+        try:
+            send_mail(
+                "New Clinic Appointment",
+                f"New Appointment Booked\n\nName: {name}\nPhone: {phone}\nDate: {date}\nTime: {time}\nToken: {token}",
+                "sreevishnu0101@gmail.com",
+                ["vishnuslap@gmail.com"],
+                fail_silently=False,
+            )
+        except:
+            pass
 
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 

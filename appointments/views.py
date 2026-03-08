@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect
-from django.core.mail import send_mail
-from django.conf import settings
 from .models import Appointment
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import os
-
 
 
 def home(request):
@@ -54,13 +51,13 @@ def book(request):
             token=token
         )
 
-        # send email
+        # send email using SendGrid
         try:
             message = Mail(
                 from_email='sreevishnu0101@gmail.com',
-                from_email='sreevishnu0101@gmail.com',
+                to_emails='vishnuslap@gmail.com',
                 subject='New Clinic Appointment',
-                  html_content=f"""
+                html_content=f"""
                 <strong>New Appointment Booked</strong><br>
                 Name: {name}<br>
                 Phone: {phone}<br>
@@ -69,11 +66,12 @@ def book(request):
                 Token: {token}
                 """
             )
-        try:
+
             sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
-            response = sg.send(message)
+            sg.send(message)
+
         except Exception as e:
-            print(e)     
+            print("Email error:", e)
 
         return redirect(f"/success?name={name}&date={date}&time={time}&token={token}")
 
